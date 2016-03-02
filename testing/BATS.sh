@@ -3,7 +3,7 @@
 #
 # Project name: Amazing
 #
-# Author: Donald Wilson
+# Author: Kyu Kim, Alan Lu, Donald Wilson
 # Date: February 2016
 #
 # Description: builds and tests AMStartup and amazing
