@@ -20,9 +20,12 @@
 #include <sys/socket.h>		// socket networking functions
 #include <arpa/inet.h>		// for htonl
 #include <string.h>			// string functions
+#include <errno.h>			// errno support
+#include <inttypes.h>		// PRIu32
 
 // ---------------- Local includes  e.g., "file.h"
 #include "amazing.h"
+#include "utils.h"
 
 // ---------------- Constant definitions 
 
@@ -38,24 +41,24 @@
 int main(int argc, char* argv[]) {
 
 	// Declare local variables
-	uint32_t avatarId, nAvatars, difficulty, mazePort;
-	char* logFilePath, serverIp;
+	unsigned int avatarId, nAvatars, difficulty, mazePort;
+	char *serverIp;
+	char* logFilePath;
 	FILE* logFile;
 
 	uint32_t sockFd;
 
-	uint32_t i, dir, nextDirection;
+	unsigned int i, dir, nextDirection;
 	struct Avatar* avatar;
-	struct sockaddr_in serverAddress;
 	struct AM_Message* avatarReady;
 	struct AM_Message* avatarMove;
 	ssize_t recvMessageLen;				// in bytes
 	AM_Message* recvMessage;
-
 	
 	// Check args (checking number of args is sufficient)
 	if( 7 != argc) {
-		//TODO print error to log
+		// print error to fprintf
+		fprintf(stderr, "Incorrect argument count for avatar %i\n", atoi(argv[2]));
 		exit (1);
 	}
 
@@ -79,29 +82,30 @@ int main(int argc, char* argv[]) {
 	avatar->pos.x = -1;		// initialized to impossible value
 	avatar->pos.y = -1;
 
-
 	if ((sockFd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		printf("Error: failed to create the socket\n");
+		fprintf(logFile, "Error: failed to create the socket\n");
 		return 1;	
 	}
 
 	// create the socket address
+	struct sockaddr_in serverAddress;
 	memset(&serverAddress, 0, sizeof(serverAddress));
 	serverAddress.sin_family = AF_INET;
-	serverAddress.sin_port = htons(atoi(AM_SERVER_PORT));
+	serverAddress.sin_port = htons(mazePort);
 	serverAddress.sin_addr.s_addr = inet_addr(serverIp);
 
 	// attempt to connect to the server
-	if (connect(sockFd, (struct sockraddr *) &serverAddress, sizeof(serverAddress)) < 0) {
-		//TODO print error to log
+	if (connect(sockFd, (struct sockaddr*) &serverAddress, sizeof(serverAddress)) < 0) {
+		fprintf(logFile, "Error: could not connect to the server: %s.\n", strerror(errno));
 		return 1;
-
 	}
 
 	// Send AM_AVATAR_READY message
+	avatarReady = calloc(1, AM_MAX_MESSAGE + 1);
 	avatarReady->type = htons(AM_AVATAR_READY);
 	avatarReady->avatar_ready.AvatarId = htons(avatarId);
 	send(sockFd, avatarReady, sizeof(AM_Message), 0);
+	fprintf(logFile, "Avatar ID %i sent avatar ready.\n", avatarId);
 
 	// free send memory
 	free(avatarReady);
@@ -112,31 +116,31 @@ int main(int argc, char* argv[]) {
 	while( (recvMessageLen = recv(sockFd, recvMessage, AM_MAX_MESSAGE, 0) > 0) 	) {
 		//TODO Evaluate message type
 		if (IS_AM_ERROR(recvMessage->type)){
-			fprintf(stdout, "Error: ");
+			fprintf(logFile, "Error: ");
 			// AM_SERVER_OUT_OF_MEM
 			if(0 == avatarId) {
 				if (ntohl(recvMessage->type) == AM_SERVER_OUT_OF_MEM) {
-					fprintf(stdout, "server out of memory.\n");
+					fprintf(logFile, "server out of memory.\n");
 					return 1;
 				}
 				else if (ntohl(recvMessage->type) == AM_SERVER_DISK_QUOTA) {
-					fprintf(stdout, "server disk quota exceeded.\n");
+					fprintf(logFile, "server disk quota exceeded.\n");
 					return 1;
 				}
 				else if (ntohl(recvMessage->type) == AM_UNEXPECTED_MSG_TYPE) {
-					fprintf(stdout, "unexpected message type.\n");
+					fprintf(logFile, "unexpected message type.\n");
 				}
 				else if (ntohl(recvMessage->type) == AM_UNKNOWN_MSG_TYPE) {
-					fprintf(stdout, "unknown message type %i.\n", ntohl(recvMessage->unknown_msg_type.BadType));
+					fprintf(logFile, "unknown message type %i.\n", ntohl(recvMessage->unknown_msg_type.BadType));
 				}
 			}
 
 			if (ntohl(recvMessage->type) == AM_NO_SUCH_AVATAR) {
-				fprintf(stdout, "no avatar with ID %i\n", avatarId);
+				fprintf(logFile, "no avatar with ID %i\n", avatarId);
 				return 1;
 			}
 			else if (ntohl(recvMessage->type) == AM_AVATAR_OUT_OF_TURN) {
-				fprintf(stdout, "avatar %i out of turn.\n", avatarId);
+				fprintf(logFile, "avatar %i out of turn.\n", avatarId);
 			}
 
 			//TODO free allocated memory, etc
@@ -151,10 +155,11 @@ int main(int argc, char* argv[]) {
 			// If it’s my turn to move (i.e. TurnID == AvatarID):
 			if(ntohl(recvMessage->avatar_turn.TurnId) == avatarId) {
 				// If my position changed:
-				if(recvMessage->avatar_turn.Pos[avatarId] == avatar->pos) {
+				XYPos pos = recvMessage->avatar_turn.Pos[avatarId];
+				if(pos.x != avatar->pos.x || pos.y != avatar->pos.y) {
 					// Update position
-					avatar->pos.x = ntohl(recvMessage->avatar_turn->Pos[avatarId].x);
-					avatar->pos.y = ntohl(recvMessage->avatar_turn->Pos[avatarId].y);
+					avatar->pos.x = ntohl(pos.x);
+					avatar->pos.y = ntohl(pos.y);
 
 					// Update direction of last successful move:
 					dir = nextDirection;
@@ -163,7 +168,7 @@ int main(int argc, char* argv[]) {
 
 				// (Note: We designate Avatar 0 as the “exit”)
 				// If position == exit location (Avatar 0’s position):
-				if(avatar->pos.x == ntohl(recvMessage->avatar_turn->Pos[0].x) && avatar->pos.y == ntohl(recvMessage->avatar_turn->Pos[0].y)) {
+				if(avatar->pos.x == ntohl(pos.x) && avatar->pos.y == ntohl(pos.y)) {
 					nextDirection = M_NULL_MOVE;
 				}
 				else {
@@ -180,11 +185,14 @@ int main(int argc, char* argv[]) {
 		} 
 		else if (ntohl(recvMessage->type) == AM_MAZE_SOLVED) {// Else if AM_MAZE_SOLVED 
 			if(0 == avatarId) {
-				//TODO write success message to log file
-				fprintf(logFile, "Success! You've solved the maze!\n");
+				// write success message to log file
+				fprintf(logFile, "Success! Maze solved. nAvatars: %i Difficulty: %i Moves: %"PRIu32" Hash: %"PRIu32"\n", nAvatars, difficulty, ntohl(recvMessage->maze_solved.nMoves), ntohl(recvMessage->maze_solved.Hash));
 			}
-			//TODO free allocated memory, etc
+			// free allocated memory, etc
 			fclose(logFile);
+			free(avatarMove);
+			free(recvMessage);
+			free(avatar);
 			return 0;
 		}
 
@@ -195,4 +203,5 @@ int main(int argc, char* argv[]) {
 	free(avatar);
 
 	// Exit
+	return 0;
 }
