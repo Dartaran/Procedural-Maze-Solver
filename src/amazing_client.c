@@ -15,6 +15,7 @@
 // ---------------- Open Issues 
 
 // ---------------- System includes e.g., <stdio.h>
+#include <stdio.h>
 
 // ---------------- Local includes  e.g., "file.h"
 
@@ -29,3 +30,8 @@
 // ---------------- Private prototypes 
 
 /*====================================================================*/
+
+int main(int argc, char **argv) {
+	printf("Started avatar client.\n");
+	return 0;
+}

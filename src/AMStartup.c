@@ -27,6 +27,9 @@
 #include <string.h>			// string functions
 #include <netdb.h>
 #include <errno.h>
+#include <time.h>
+#include <netinet/in.h>
+#include <inttypes.h>
 
 // ---------------- Local includes  e.g., "file.h"
 #include "amazing.h"
@@ -46,7 +49,7 @@
 
 int main(int argc, char **argv) {
 	/* check arguments */
-	if (argc != 3) {
+	if (argc != 4) {
 		printf("Usage: ./AMStartup [nAvatars] [Difficulty] [Hostname]\n");
 		return 1;
 	}
@@ -71,11 +74,6 @@ int main(int argc, char **argv) {
 	else if (difficulty > AM_MAX_DIFFICULTY) {
 		printf("Error: the maximum difficulty is %i.\n", AM_MAX_DIFFICULTY);
 		return 1; 
-	}
-
-	if (strcmp(HOST_NAME, argv[2]) != 0) {
-		printf("Error: the hostname must be %s\n", HOST_NAME);
-		return 1;
 	}
 
 	/* send AM_INIT message to server */
@@ -130,13 +128,13 @@ int main(int argc, char **argv) {
 
 	free(initResponse);
 
-	if (ntohs(initResponse->type) != AM_INIT_OK) {
+	if (IS_AM_ERROR(ntohs(initResponse->type))) {
 		if (ntohs(initResponse->type) == AM_INIT_FAILED) {
 			printf("Server initialization failed: %"PRIu32"\n", initResponse->init_failed.ErrNum);
 			return 1;	
 		}
 		else {
-			printf("Unknown serve rerror.\n");
+			printf("Unknown server error.\n");
 			return 1;
 		}
 	}
@@ -144,7 +142,7 @@ int main(int argc, char **argv) {
 	// get the necessary data from the init response
 	unsigned int mazePort = ntohl(initResponse->init_ok.MazePort);
 	unsigned int mazeWidth = ntohl(initResponse->init_ok.MazeWidth);
-	unsigned int mazeHeight = ntohl(initResponse->init-ok.MazeHeight);
+	unsigned int mazeHeight = ntohl(initResponse->init_ok.MazeHeight);
 
 	// create log file
 	FILE *logFile;
@@ -154,8 +152,8 @@ int main(int argc, char **argv) {
 	MALLOC_CHECK(stderr, userName);
 
 	sprintf(fileName, "Amazing_%s_%s_%s.log", userName, argv[1], argv[2]);
-	logFile = fopen(filename, "w");
-	MALLOC_CHECK(logFile);
+	logFile = fopen(fileName, "w");
+	MALLOC_CHECK(stderr, logFile);
 
 	time_t now;
 	time(&now);
@@ -164,10 +162,11 @@ int main(int argc, char **argv) {
 	fprintf(logFile, "%s %i %s", userName, mazePort, ctime(&now));
 
 	// startup avatar processes
-	for (int i = 0; i < nAvatar; i++) {
-		char *startAvatarCmd = malloc(sizeof(char));
+	for (int i = 0; i < nAvatars; i++) {
+		char *startAvatarCmd = malloc(30);
 		sprintf(startAvatarCmd, "./amazing_client %i %i %i %s %i %s", i, nAvatars, difficulty, ip, mazePort, fileName);
-		system(startAvatarCmd); 
+		system(startAvatarCmd);
+		free(startAvatarCmd); 
 	}
 
 	return 0;
