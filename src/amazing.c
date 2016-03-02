@@ -62,6 +62,8 @@ int main(int argc, char* argv[]) {
 		exit (1);
 	}
 
+	printf("test\n");
+
 	// Initialize local variables
 	avatarId = atoi(argv[1]);
 	nAvatars = atoi(argv[2]);

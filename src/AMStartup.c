@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
 	// startup avatar processes
 	for (int i = 0; i < nAvatars; i++) {
 		char *startAvatarCmd = malloc(100);
-		sprintf(startAvatarCmd, "./amazing_client %i %i %i %s %i %s", i, nAvatars, difficulty, ip, mazePort, fileName);
+		sprintf(startAvatarCmd, "./amazing %i %i %i %s %i %s", i, nAvatars, difficulty, ip, mazePort, fileName);
 		system(startAvatarCmd);
 		free(startAvatarCmd); 
 	}
