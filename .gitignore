@@ -1,0 +1,12 @@
+# Filename: .gitignore
+#
+# Project name: Amazing
+#
+# Description: a list of directories/files/types for git to ignore
+#
+# Author: Kyu Kim, Alan Lu, Donald Wilson
+# Date: February 2016
+
+
+# binary files in the bin directory
+bin/*
