@@ -9,4 +9,7 @@
 
 
 # binary files in the bin directory
-bin/*
+/bin/*
+
+# testing logs
+/testing/BATS.log

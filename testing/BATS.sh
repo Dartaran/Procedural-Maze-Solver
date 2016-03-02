@@ -23,7 +23,7 @@ module='Amazing Client'
 path='testing/'
 logfile='BATS.log'
 log=$path$logfile
-prog='./AMStartup'
+EXEC='./bin/AMStartup'
 
 cd ..
 
