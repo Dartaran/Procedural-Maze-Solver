@@ -77,8 +77,9 @@ int main(int argc, char **argv) {
 	}
 
 	/* send AM_INIT message to server */
-	AM_Message *init = malloc(sizeof(AM_Message));
+	AM_Message *init = calloc(1, AM_MAX_MESSAGE + 1);
 	MALLOC_CHECK(stderr, init);
+	init->type = htonl(AM_INIT);
 	init->init.nAvatars = htonl(nAvatars);
 	init->init.Difficulty = htonl(difficulty);
 
@@ -90,7 +91,7 @@ int main(int argc, char **argv) {
 	}
 
 	// get IP from hostname
-	char *ip = malloc(sizeof(char));
+	char *ip = calloc(1, AM_MAX_MESSAGE + 1);
 	if (getIPFromHostName(hostname, ip) == 1) {
 		return 1;
 	}
@@ -112,7 +113,7 @@ int main(int argc, char **argv) {
 	send(sockfd, init, sizeof(AM_Message), 0);
 	
 	// receive the message
-	AM_Message *initResponse = malloc(sizeof(AM_Message));
+	AM_Message *initResponse = calloc(1, AM_MAX_MESSAGE + 1);
 	MALLOC_CHECK(stderr, initResponse);
 
 	if (recv(sockfd, initResponse, sizeof(AM_Message), 0) == 0) {
@@ -126,11 +127,9 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	free(initResponse);
-
-	if (IS_AM_ERROR(ntohs(initResponse->type))) {
-		if (ntohs(initResponse->type) == AM_INIT_FAILED) {
-			printf("Server initialization failed: %"PRIu32"\n", initResponse->init_failed.ErrNum);
+	if (IS_AM_ERROR(ntohl(initResponse->type))) {
+		if (ntohl(initResponse->type) == AM_INIT_FAILED) {
+			printf("Server initialization failed: %"PRIu32"\n", ntohl(initResponse->init_failed.ErrNum));
 			return 1;	
 		}
 		else {
@@ -146,7 +145,7 @@ int main(int argc, char **argv) {
 
 	// create log file
 	FILE *logFile;
-	char *fileName = malloc(sizeof(char));
+	char *fileName = calloc(1, 50);
 	MALLOC_CHECK(stderr, fileName);
 	char *userName = getenv("USER");
 	MALLOC_CHECK(stderr, userName);
@@ -163,8 +162,8 @@ int main(int argc, char **argv) {
 
 	// startup avatar processes
 	for (int i = 0; i < nAvatars; i++) {
-		char *startAvatarCmd = malloc(30);
-		sprintf(startAvatarCmd, "./amazing_client %i %i %i %s %i %s", i, nAvatars, difficulty, ip, mazePort, fileName);
+		char *startAvatarCmd = malloc(100);
+		sprintf(startAvatarCmd, "./amazing %i %i %i %s %i %s", i, nAvatars, difficulty, ip, mazePort, fileName);
 		system(startAvatarCmd);
 		free(startAvatarCmd); 
 	}
@@ -182,7 +181,7 @@ int getIPFromHostName(char *hostname, char *ip) {
 
 	struct in_addr addr;
 	memcpy(&addr, he->h_addr_list[0], sizeof(struct in_addr));
-	strncpy(ip, inet_ntoa(addr), AM_MAX_MESSAGE);
+	strcpy(ip, inet_ntoa(addr));
 
 	return 0;
 }

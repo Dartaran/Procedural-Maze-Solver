@@ -6,15 +6,15 @@
 
 CC = gcc
 CFLAGS = -Wall -pedantic -std=c11
-CFILES= ./src/AMStartup.c ./src/amazing.c
+all: amazing AMStartup
 
 amazing: ./src/amazing.c 
-	$(CC) $(CFLAGS) -o amazing_client ./src/amazing.c
+	$(CC) $(CFLAGS) -o ./bin/$@ ./src/amazing.c
 
 AMStartup: ./src/AMStartup.c 
-	$(CC) $(CFLAGS) -o $@ ./src/AMStartup.c
+	$(CC) $(CFLAGS) -o ./bin/$@ ./src/AMStartup.c
 
 clean:
-	rm -f *~
-	rm -f *#
-	rm -f *.o
+	rm -f ./bin/*~
+	rm -f ./bin/*#
+	rm -f ./bin/*.o
