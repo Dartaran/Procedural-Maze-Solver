@@ -9,7 +9,7 @@ CFLAGS = -Wall -pedantic -std=c11
 CFILES= ./src/AMStartup.c ./src/amazing.c
 
 amazing: ./src/amazing.c 
-	$(CC) $(CFLAGS) -o amazing_client ./src/amazing.c
+	$(CC) $(CFLAGS) -o $@ ./src/amazing.c
 
 AMStartup: ./src/AMStartup.c 
 	$(CC) $(CFLAGS) -o $@ ./src/AMStartup.c
