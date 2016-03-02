@@ -40,14 +40,19 @@ int main(int argc, char* argv[]) {
 
 	// Declare local variables
 	uint32_t avatarId, nAvatars, difficulty, serverIp, mazePort;
-	char* logFile;				// filename
+	char* logFile;						// filename
 
 	uint32_t sockFd;
 	struct sockaddr* serverAddress;
 
 	uint32_t i, dir, nextDirection;
-	struct *Avatar avatar;
-	struct avatar_ready avatarReady;
+	struct Avatar* avatar;
+	struct sockaddr_in* serverAddress;
+	struct avatar_ready* avatarReady;
+	struct avatar_move* avatarMove;
+	ssize_t recvMessageLen;				// in bytes
+	char* recvMessage;
+
 	
 	// Check args (checking number of args is sufficient)
 	if( 7 != argc) {
@@ -93,59 +98,66 @@ int main(int argc, char* argv[]) {
 
 	// Send AM_AVATAR_READY message
 	avatarReady->AvatarId = htons(avatarId);
-	send(MazePort, avatar_ready, sizeof(AM_MESSAGE), 0);
+	send(sockFd, avatar_ready, sizeof(AM_MESSAGE), 0);
 
-	// While we haven’t completed the maze:
-	for(;;) {
-	// TODO Listen for a message from the server
+	recvMessage = malloc(AM_MAX_MESSAGE + 1);
+	avatarMove = malloc(sizeof(avatar_move));
+	// While we haven’t completed the maze, listen for a message from the server:
+	while( (recvMessageLen = recv(sockFd, recvMessage, AM_MAX_MESSAGE, 0) > 0) {
+		//TODO Evaluate message type
 
-	// If AM_AVATAR_TURN:
-		// If it’s my turn to move (i.e. TurnID == AvatarID):
-		if(//TODO){
-			// If my position changed:
-			if(//TODO) {
-				// Update position
-				avatar->pos->x = //TODO;
-				avatar->pos->y = //TODO;
+		// If AM_AVATAR_TURN:
+		if(//TODO) {
+			// If it’s my turn to move (i.e. TurnID == AvatarID):
+			if(//TODO){
+				// If my position changed:
+				if(//TODO) {
+					// Update position
+					avatar->pos->x = //TODO;
+					avatar->pos->y = //TODO;
 
-				// Update direction of last successful move:
-				dir = nextDirection;
-				i = 0;
+					// Update direction of last successful move:
+					dir = nextDirection;
+					i = 0;
+				}
+
+				// (Note: We designate Avatar 0 as the “exit”)
+				// If position == exit location (Avatar 0’s position):
+				if(avatar->pos->x == ... && avatar->pos->y == ...//TODO) {
+					nextDirection = M_NULL_MOVE;
+				}
+				else {
+					nextDirection = (direction + (M_NUM_DIRECTIONS - 1) + i) mod 4;
+				}
+
+				// Attempt to make a move in the nextDirection
+				avatarMove->AvatarId = avatarId;
+				avatarMove->Direction = nextDirection;
+				send( sockFd, htons(nextDirection), htons( sizeof(AM_MESSAGE) ), 0);
+
+				i++;
 			}
-
-			// (Note: We designate Avatar 0 as the “exit”)
-			// If position == exit location (Avatar 0’s position):
-			if(//TODO) {
-				// Stay put; set nextDirection = 8 (null move)
-			}
-			else {
-				nextDirection = (direction + 3 + i) mod 4;
-			}
-
-			// Attempt to make a move in the nextDirection
-			//TODO
-			
-			i++;
 		}
 
-	// Else if AM_MAZE_SOLVED 
-		// Avatar 0 writes a success message to log file
-		// Close files, free allocated memory, etc
-		// Exit
+		// Else if AM_MAZE_SOLVED 
+			// Avatar 0 writes a success message to log file
+			if(0 == avatarId) {
+			// Close files, free allocated memory, etc
+			// Exit
 
-	// Else if AM_AVATAR_TOO_MANY_MOVES or AM_SERVER_TIMEOUT or 
-	// AM_SERVER_OUT_OF_MEM
-		// Avatar 0 writes message to log file
-		// Close files, free allocated memory, etc
-		// Exit
-			
-	// Else if AM_NO_SUCH_AVATAR or AM_UKNOWN_MSG_TYPE or 
-	// AM_UNEXPECTED_MSG_TYPE or AM_AVATAR_OUT_OF_TURN
-	// Write error message to log file
-
-	// Else if AM_SERVER_DISK_QUOTA
+		// Else if AM_AVATAR_TOO_MANY_MOVES or AM_SERVER_TIMEOUT or 
+		// AM_SERVER_OUT_OF_MEM
+			// Avatar 0 writes message to log file
+			// Close files, free allocated memory, etc
+			// Exit
+				
+		// Else if AM_NO_SUCH_AVATAR or AM_UKNOWN_MSG_TYPE or 
+		// AM_UNEXPECTED_MSG_TYPE or AM_AVATAR_OUT_OF_TURN
 		// Write error message to log file
-		// (Note: Please notify TA/instructor in this event)
+
+		// Else if AM_SERVER_DISK_QUOTA
+			// Write error message to log file
+			// (Note: Please notify TA/instructor in this event)
 	}
 	// Exit
 }
