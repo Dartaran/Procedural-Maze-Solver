@@ -1,1 +1,6 @@
-(./AMStartup --help will display this file)
+Usage: AMStartup [N_AVATARS] [DIFFICULTY] [HOSTNAME]
+N_AVATARS is the number of avatars to run in the maze (2-10)
+DIFFICULTY is the level of difficulty of the maze (0-9)
+HOSTNAME is the server hosting the maze
+Example: AMStartup 2 0 flume.cs.dartmouth.edu
+
