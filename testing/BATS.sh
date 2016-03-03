@@ -20,10 +20,10 @@
 
 
 module='Amazing Client'
-path='testing/'
+path='./testing/'
 logfile='BATS.log'
 log=$path$logfile
-EXEC='./bin/AMStartup'
+EXEC='AMStartup'
 
 cd ..
 
@@ -61,65 +61,65 @@ else
 	exit 1
 fi
 
-
+cd bin
 # testing format: print name of test; expected results; system output
-printf "\nTESTING AMStartup:\n" >> $log
+printf "\nTESTING AMStartup:\n" >> .$log
 
 #
-printf "\nTESTING NUMBER OF ARGUMENTS:\n" >> $log
+printf "\nTESTING NUMBER OF ARGUMENTS:\n" >> .$log
 
-printf "\nTest: incorrect number of arguments (3)\n" >> $log
-printf "Expected: error message and exit code 1\n" >> $log
-$EXEC 1 1 &>> $log
-printf "Exit code: $?\n" >> $log
+printf "\nTest: incorrect number of arguments (3)\n" >> .$log
+printf "Expected: error message and exit code 1\n" >> .$log
+$EXEC 1 1 &>> .$log
+printf "Exit code: $?\n" >> .$log
 
-printf "\nTest: incorrect number of arguments (5)\n" >> $log
-printf "Expected: error message and exit code 1\n" >> $log
-$EXEC 1 0 flume.cs.dartmouth.edu foo &>> $log
-printf "Exit code: $?\n" >> $log
-
-#
-printf "\nTESTING VALIDITY OF ARGUMENTS:\n" >> $log
-
-printf "\nTest: valid --help option\n" >> $log
-printf "Expected: contents of helpfile should be displayed\n" >> $log
-$EXEC --help &>> $log
-printf "Exit code: $?\n" >> $log
-
-printf "\nTest: invalid --help option\n" >> $log
-printf "Expected: error message and exit code 1\n" >> $log
-$EXEC -help &>> $log
-printf "Exit code: $?\n" >> $log
-
-printf "\nTest: incorrect number of avatars (1)\n" >> $log
-printf "Expected: error message and exit code 1\n" >> $log
-$EXEC 1 0 flume.cs.dartmouth.edu &>> $log
-printf "Exit code: $?\n" >> $log
-
-printf "\nTest: incorrect number of avatars (11)\n" >> $log
-printf "Expected: error message and exit code 1\n" >> $log
-$EXEC 11 0 flume.cs.dartmouth.edu &>> $log
-printf "Exit code: $?\n" >> $log
-
-printf "\nTest: incorrect difficulty level (-1)\n" >> $log
-printf "Expected: error message and exit code 1\n" >> $log
-$EXEC 2 -1 flume.cs.dartmouth.edu &>> $log
-printf "Exit code: $?\n" >> $log
-
-printf "\nTest: incorrect difficulty level (10)\n" >> $log
-printf "Expected: error message and exit code 1\n" >> $log
-$EXEC 2 10 flume.cs.dartmouth.edu &>> $log
-printf "Exit code: $?\n" >> $log
-
+printf "\nTest: incorrect number of arguments (5)\n" >> .$log
+printf "Expected: error message and exit code 1\n" >> .$log
+$EXEC 1 0 flume.cs.dartmouth.edu foo &>> .$log
+printf "Exit code: $?\n" >> .$log
 
 #
-printf "\nFUNCTIONAL TESTING:\n" >> $log
+printf "\nTESTING VALIDITY OF ARGUMENTS:\n" >> .$log
 
-printf "\nTest: 2 avatars, difficulty 0\n" >> $log
-printf "Expected: exit code 0\n" >> $log
-$EXEC 2 0 flume.cs.dartmouth.edu &>> $log
-printf "Exit code: $?\n" >> $log
+printf "\nTest: valid --help option\n" >> .$log
+printf "Expected: contents of helpfile should be displayed\n" >> .$log
+$EXEC --help &>> .$log
+printf "Exit code: $?\n" >> .$log
+
+printf "\nTest: invalid --help option\n" >> .$log
+printf "Expected: error message and exit code 1\n" >> .$log
+$EXEC -help &>> .$log
+printf "Exit code: $?\n" >> .$log
+
+printf "\nTest: incorrect number of avatars (1)\n" >> .$log
+printf "Expected: error message and exit code 1\n" >> .$log
+$EXEC 1 0 flume.cs.dartmouth.edu &>> .$log
+printf "Exit code: $?\n" >> .$log
+
+printf "\nTest: incorrect number of avatars (11)\n" >> .$log
+printf "Expected: error message and exit code 1\n" >> .$log
+$EXEC 11 0 flume.cs.dartmouth.edu &>> .$log
+printf "Exit code: $?\n" >> .$log
+
+printf "\nTest: incorrect difficulty level (-1)\n" >> .$log
+printf "Expected: error message and exit code 1\n" >> .$log
+$EXEC 2 -1 flume.cs.dartmouth.edu &>> .$log
+printf "Exit code: $?\n" >> .$log
+
+printf "\nTest: incorrect difficulty level (10)\n" >> .$log
+printf "Expected: error message and exit code 1\n" >> .$log
+$EXEC 2 10 flume.cs.dartmouth.edu &>> .$log
+printf "Exit code: $?\n" >> .$log
 
 
-printf "\nEnd of testing\n" >> $log
+#
+printf "\nFUNCTIONAL TESTING:\n" >> .$log
+
+printf "\nTest: 2 avatars, difficulty 0\n" >> .$log
+printf "Expected: exit code 0\n" >> .$log
+$EXEC 2 0 flume.cs.dartmouth.edu &>> .$log
+printf "Exit code: $?\n" >> .$log
+
+
+printf "\nEnd of testing\n" >> .$log
 
