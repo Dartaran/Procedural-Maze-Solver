@@ -18,3 +18,4 @@ clean:
 	rm -f ./bin/*~
 	rm -f ./bin/*#
 	rm -f ./bin/*.o
+	./results/Cleanup.sh
