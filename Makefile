@@ -6,6 +6,8 @@
 
 CC = gcc
 CFLAGS = -Wall -pedantic -std=c11
+DEBUG = -g -ggdb
+
 all: amazing AMStartup
 
 amazing: ./src/amazing.c 
@@ -13,6 +15,10 @@ amazing: ./src/amazing.c
 
 AMStartup: ./src/AMStartup.c 
 	$(CC) $(CFLAGS) -o ./bin/$@ ./src/AMStartup.c
+
+debug:
+	$(CC) $(CFLAGS) $(DEBUG) -o ./bin/amazing ./src/amazing.c
+	$(CC) $(CFLAGS) $(DEBUG) -o ./bin/AMStartup ./src/AMStartup.c
 
 clean:
 	rm -f ./bin/*~
