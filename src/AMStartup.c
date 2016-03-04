@@ -38,6 +38,7 @@
 
 // ---------------- Constant definitions
 #define HOST_NAME "flume.cs.dartmouth.edu"
+#define HELPFILE "../help/AMStartup_help.txt"
 
 // ---------------- Macro definitions
 
@@ -45,13 +46,27 @@
 
 // ---------------- Private variables
 
+// ---------------- Private prototypes
+
 /* ========================================================================== */
 
 int main(int argc, char **argv) {
 	/* check arguments */
 	if (argc != 4) {
-		printf("Usage: ./AMStartup [nAvatars] [Difficulty] [Hostname]\n");
-		return 1;
+		if (2 == argc) {
+			if ( 0 == strcmp("--help", argv[1]) ){
+				DisplayFile(HELPFILE);
+				return 0;
+			}
+			else {
+				printf("Usage: incorrect arguments. Use --help option for usage info.\n");
+				return 1;
+			}
+		}
+		else {
+			printf("Usage: ./AMStartup [nAvatars] [Difficulty] [Hostname]\n");
+			return 1;
+		}
 	}
 
 	int nAvatars = atoi(argv[1]);
@@ -185,3 +200,4 @@ int getIPFromHostName(char *hostname, char *ip) {
 
 	return 0;
 }
+
