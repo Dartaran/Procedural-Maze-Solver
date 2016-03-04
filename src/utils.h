@@ -1,8 +1,7 @@
 /* ========================================================================== */
 /* File: utils.h
  *
- * Project name: CS50 Tiny Search Engine
- * Component name: Crawler
+ * Project name: Amazing
  *
  * This file contains helpful utility macros.
  *
@@ -41,5 +40,10 @@
             exit(EXIT_FAILURE);                                         \
         }                                                               \
     } while(0)
+
+/*
+ * Displays the contents of a text file.
+ */
+int DisplayFile(char *filepath);
 
 #endif // UTILS_H
