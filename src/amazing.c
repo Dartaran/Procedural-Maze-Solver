@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
 
 	uint32_t sockFd;
 
-	int i, dir, nextDirection;
+	int i, dir, nextDirection, nextCompassIndex;
 	struct Avatar* avatar;
 	struct AM_Message* avatarReady;
 	struct AM_Message* avatarMove;
@@ -88,8 +88,9 @@ int main(int argc, char* argv[]) {
 	logFile = fopen(logFilePath, "a");
 	MALLOC_CHECK(stderr, logFile);
 
-	dir = M_NORTH;				// direction of last successful move
-	nextDirection = M_NORTH;	// direction to attempt next
+	dir = 1;				// direction of last successful move
+	nextCompassIndex = 0;
+	nextDirection = compass[nextCompassIndex];		// direction to attempt next
 	i = 0;						// a count of unsuccessful moves, such that 
 								// 0 indicates a left turn; 1 ahead; 2 right; 3 back
 
@@ -177,44 +178,16 @@ int main(int argc, char* argv[]) {
 			if(ntohl(recvMessage->avatar_turn.TurnId) == avatarId) {
 				// If my position changed:
 				XYPos pos = recvMessage->avatar_turn.Pos[avatarId];
-				if(pos.x != avatar->pos.x || pos.y != avatar->pos.y) {
+				if(ntohl(pos.x) != avatar->pos.x || ntohl(pos.y) != avatar->pos.y) {
 					// Update position
 					avatar->pos.x = ntohl(pos.x);
 					avatar->pos.y = ntohl(pos.y);
 
 					// Update direction of last successful move:
-					dir = nextDirection;
-					// check the left wall
-					// if (nextDirection == M_SOUTH) {
-					// 	nextDirection = M_EAST;
-					// }
-					// else if (nextDirection == M_EAST) {
-					// 	nextDirection = M_NORTH;
-					// }
-					// else if (nextDirection == M_NORTH) {
-					// 	nextDirection = M_WEST;
-					// }
-					// else if (nextDirection == M_WEST) {
-					// 	nextDirection = M_SOUTH;
-					// }
+					dir = nextCompassIndex;
 
 					i = 0;
 				}
-				// else { // hit a wall
-				// 	// turn to the right
-				// 	if (nextDirection == M_SOUTH) {
-				// 		nextDirection = M_WEST;
-				// 	}
-				// 	else if (nextDirection == M_EAST) {
-				// 		nextDirection = M_SOUTH;
-				// 	}
-				// 	else if (nextDirection == M_NORTH) {
-				// 		nextDirection = M_EAST;
-				// 	}
-				// 	else if (nextDirection == M_WEST) {
-				// 		nextDirection = M_NORTH;
-				// 	}
-				// }
 
 				// (Note: We designate Avatar 0 as the “exit”)
 				// If position == exit location (Avatar 0’s position):
@@ -223,8 +196,9 @@ int main(int argc, char* argv[]) {
 					nextDirection = M_NULL_MOVE;
 				}
 				else {
-					nextDirection = (dir + (M_NUM_DIRECTIONS - 1) + i) % 4;
-					nextDirection = compass[nextDirection];
+					//nextDirection = (dir + i) % 4;
+					nextCompassIndex = (dir + (M_NUM_DIRECTIONS - 1) + i) % 4;
+					nextDirection = compass[nextCompassIndex];
 				}
 
 				// Attempt to make a move in the nextDirection
@@ -256,5 +230,5 @@ int main(int argc, char* argv[]) {
 	free(avatar);
 
 	// Exit
-	return 0;
+	return 1;
 }
