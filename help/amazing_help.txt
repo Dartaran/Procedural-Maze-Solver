@@ -1,0 +1,8 @@
+Usage: amazing [AVATAR_ID] [N_AVATARS] [DIFFICULTY] [SERVER_IP] [MAZEPORT] [LOGFILE]
+AVATAR_ID is the integer identifier of this avatar (0-(N_AVATARS-1)
+N_AVATARS is the number of avatars to run in the maze (2-10)
+DIFFICULTY is the level of difficulty of the maze (0-9)
+SERVER_IP is the IP address of the server
+MAZEPORT is the TCP/IP port used to communicate with the server
+LOGFILE is the log to which all avatars in this maze write their output
+Example: amazing 0 3 2 129.170.212.235 10829 Amazing_3_2.log

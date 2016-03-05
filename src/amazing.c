@@ -28,6 +28,7 @@
 #include "utils.h"
 
 // ---------------- Constant definitions 
+#define HELPFILE "../help/amazing_help.txt"
 
 // ---------------- Macro definitions
 
@@ -59,9 +60,21 @@ int main(int argc, char* argv[]) {
 	
 	// Check args (checking number of args is sufficient)
 	if( 7 != argc) {
-		// print error to fprintf
-		fprintf(stderr, "Incorrect argument count for avatar %i.  Usage ./amazing [id] [nAvatars] [difficulty] [ip] [mazePort] [fileName]\n", atoi(argv[2]));
-		exit (1);
+		if (2 == argc) {
+			if ( 0 == strcmp("--help", argv[1]) ){
+				DisplayFile(HELPFILE);
+				return 0;
+			}
+			else {
+				printf("Usage: incorrect arguments. Use --help option for usage info.\n");
+				return 1;
+			}
+		}
+		else {
+			// print error to fprintf
+			fprintf(stderr, "Incorrect argument count for avatar %i.  Usage ./amazing [id] [nAvatars] [difficulty] [ip] [mazePort] [fileName]\n", atoi(argv[2]));	
+			exit (1);
+		}
 	}
 
 	// Initialize local variables

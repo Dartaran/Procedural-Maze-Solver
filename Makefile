@@ -5,16 +5,23 @@
 # Assignment: Amazing Project
 
 CC = gcc
-CFLAGS = -Wall -pedantic -std=c11 -g
+CFLAGS = -Wall -pedantic -std=c11
+DEBUG = -g -ggdb
+
 all: amazing AMStartup
 
 amazing: ./src/amazing.c 
-	$(CC) $(CFLAGS) -o ./bin/$@ ./src/amazing.c
+	$(CC) $(CFLAGS) -o ./bin/$@ ./src/amazing.c ./src/utils.c
 
 AMStartup: ./src/AMStartup.c 
-	$(CC) $(CFLAGS) -o ./bin/$@ ./src/AMStartup.c
+	$(CC) $(CFLAGS) -o ./bin/$@ ./src/AMStartup.c ./src/utils.c
+
+debug:
+	$(CC) $(CFLAGS) $(DEBUG) -o ./bin/amazing ./src/amazing.c ./src/utils.c
+	$(CC) $(CFLAGS) $(DEBUG) -o ./bin/AMStartup ./src/AMStartup.c ./src/utils.c
 
 clean:
 	rm -f ./bin/*~
 	rm -f ./bin/*#
 	rm -f ./bin/*.o
+	cd results; ./Cleanup.sh
