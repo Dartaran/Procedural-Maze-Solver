@@ -5,7 +5,7 @@
 # Assignment: Amazing Project
 
 CC = gcc
-CFLAGS = -Wall -pedantic -std=c11
+CFLAGS = -Wall -pedantic -std=c11 -g
 all: amazing AMStartup
 
 amazing: ./src/amazing.c 

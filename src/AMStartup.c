@@ -1,7 +1,7 @@
 /* ========================================================================== */
 /* File: AMStartup.c - The startup program for the Amazing Project
  *
- * Author: Alan Lu
+ * Author: Alan Lu, Kyu Kim, Donald Wilson (Lambrusco)
  * Date: February 28, 2016
  *
  * Input: [nAvatars] [Difficulty] [Hostname]
@@ -111,6 +111,8 @@ int main(int argc, char **argv) {
 
 	// send the message
 	send(sockfd, init, sizeof(AM_Message), 0);
+
+	free(init);
 	
 	// receive the message
 	AM_Message *initResponse = calloc(1, AM_MAX_MESSAGE + 1);
@@ -143,14 +145,18 @@ int main(int argc, char **argv) {
 	unsigned int mazeWidth = ntohl(initResponse->init_ok.MazeWidth);
 	unsigned int mazeHeight = ntohl(initResponse->init_ok.MazeHeight);
 
+	printf("%i %i %i", mazePort, mazeWidth, mazeHeight);
+
+	free(initResponse);
+
 	// create log file
 	FILE *logFile;
-	char *fileName = calloc(1, 50);
-	MALLOC_CHECK(stderr, fileName);
 	char *userName = getenv("USER");
 	MALLOC_CHECK(stderr, userName);
+	char *fileName = calloc(30 + strlen(userName) + strlen(argv[1]) + strlen(argv[2]), sizeof(char));
+	MALLOC_CHECK(stderr, fileName);
 
-	sprintf(fileName, "Amazing_%s_%s_%s.log", userName, argv[1], argv[2]);
+	sprintf(fileName, "../results/Amazing_%s_%s_%s.log", userName, argv[1], argv[2]);
 	logFile = fopen(fileName, "w");
 	MALLOC_CHECK(stderr, logFile);
 
@@ -162,15 +168,21 @@ int main(int argc, char **argv) {
 
 	// startup avatar processes
 	for (int i = 0; i < nAvatars; i++) {
-		char *startAvatarCmd = malloc(100);
-		sprintf(startAvatarCmd, "./amazing %i %i %i %s %i %s", i, nAvatars, difficulty, ip, mazePort, fileName);
+		char startAvatarCmd[AM_MAX_MESSAGE];
+		sprintf(startAvatarCmd, "./amazing %i %i %i %s %i %s &", i, nAvatars, difficulty, ip, mazePort, fileName);
+		printf("%s\n", startAvatarCmd);
 		system(startAvatarCmd);
-		free(startAvatarCmd); 
 	}
 
+	free(fileName);
+	free(ip);
+	fclose(logFile);
 	return 0;
 }
 
+/*
+* Gets the ip address of a hostname. If no ip is found then returns an error.
+*/
 int getIPFromHostName(char *hostname, char *ip) {
 	struct hostent *he = gethostbyname(hostname);
 
