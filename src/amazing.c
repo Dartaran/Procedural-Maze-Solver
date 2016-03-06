@@ -42,20 +42,17 @@
 int main(int argc, char* argv[]) {
 
 	// Declare local variables
+	int i, dir, nextDirection, nextCompassIndex;
 	unsigned int avatarId, nAvatars, difficulty, mazePort;
-	char *serverIp;
+	uint32_t sockFd;
+	char* serverIp;
 	char* logFilePath;
 	FILE* logFile;
-
-	uint32_t sockFd;
-
-	int i, dir, nextDirection, nextCompassIndex;
 	struct Avatar* avatar;
 	struct AM_Message* avatarReady;
 	struct AM_Message* avatarMove;
 	ssize_t recvMessageLen;				// in bytes
 	AM_Message* recvMessage;
-
 	const int compass[] = {M_WEST, M_NORTH, M_EAST, M_SOUTH};
 	
 	// Check args (checking number of args is sufficient)
@@ -88,17 +85,17 @@ int main(int argc, char* argv[]) {
 	logFile = fopen(logFilePath, "a");
 	MALLOC_CHECK(stderr, logFile);
 
-	dir = 1;				// direction of last successful move
+	dir = 1;					// direction of last successful move
 	nextCompassIndex = 0;
 	nextDirection = compass[nextCompassIndex];		// direction to attempt next
 	i = 0;						// a count of unsuccessful moves, such that 
 								// 0 indicates a left turn; 1 ahead; 2 right; 3 back
-
 	avatar = malloc( sizeof(Avatar) );
 	avatar->fd = avatarId;
-	avatar->pos.x = -1;		// initialized to impossible value
+	avatar->pos.x = -1;			// initialized to impossible value
 	avatar->pos.y = -1;
 
+	// create the socket
 	if ((sockFd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		printf("Error: failed to create the socket\n");
 		fclose(logFile);
@@ -172,9 +169,8 @@ int main(int argc, char* argv[]) {
 			return 1;
 		}
 
-		// If AM_AVATAR_TURN:
-		if(ntohl(recvMessage->type) == AM_AVATAR_TURN) {
-			// If it’s my turn to move (i.e. TurnID == AvatarID):
+		else if(ntohl(recvMessage->type) == AM_AVATAR_TURN) {
+			// If it’s my turn to move:
 			if(ntohl(recvMessage->avatar_turn.TurnId) == avatarId) {
 				// If my position changed:
 				XYPos pos = recvMessage->avatar_turn.Pos[avatarId];
@@ -189,14 +185,12 @@ int main(int argc, char* argv[]) {
 					i = 0;
 				}
 
-				// (Note: We designate Avatar 0 as the “exit”)
-				// If position == exit location (Avatar 0’s position):
+				// If I have reached the exit location (we designate Avatar 0 as the “exit”):
 				XYPos exitPos = recvMessage->avatar_turn.Pos[0];
 				if(avatar->pos.x == ntohl(exitPos.x) && avatar->pos.y == ntohl(exitPos.y)) {
 					nextDirection = M_NULL_MOVE;
 				}
 				else {
-					//nextDirection = (dir + i) % 4;
 					nextCompassIndex = (dir + (M_NUM_DIRECTIONS - 1) + i) % 4;
 					nextDirection = compass[nextCompassIndex];
 				}
@@ -210,9 +204,9 @@ int main(int argc, char* argv[]) {
 				i++;
 			}
 		} 
-		else if (ntohl(recvMessage->type) == AM_MAZE_SOLVED) {// Else if AM_MAZE_SOLVED 
+
+		else if (ntohl(recvMessage->type) == AM_MAZE_SOLVED) {
 			if(0 == avatarId) {
-				// write success message to log file
 				printf("Success! Maze solved. nAvatars: %i Difficulty: %i Moves: %"PRIu32" Hash: %"PRIu32"\n", nAvatars, difficulty, ntohl(recvMessage->maze_solved.nMoves), ntohl(recvMessage->maze_solved.Hash));
 			}
 			// free allocated memory, etc
@@ -222,13 +216,9 @@ int main(int argc, char* argv[]) {
 			free(avatar);
 			return 0;
 		}
-
-		// free allocated memory
 	}
 
 	fclose(logFile);
 	free(avatar);
-
-	// Exit
 	return 1;
 }
