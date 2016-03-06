@@ -98,12 +98,7 @@ int main(int argc, char **argv) {
 	init->init.nAvatars = htonl(nAvatars);
 	init->init.Difficulty = htonl(difficulty);
 
-	int sockfd; // socket file descriptor
-
-	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		printf("Error: failed to create the socket\n");
-		return 1;
-	}
+	uint32_t sockfd; // socket file descriptor
 
 	// get IP from hostname
 	char *ip = calloc(1, AM_MAX_MESSAGE + 1);
@@ -111,16 +106,8 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	// create the socket address
-	struct sockaddr_in socketAddress;
-	memset(&socketAddress, 0, sizeof(socketAddress));
-	socketAddress.sin_family = AF_INET;
-	socketAddress.sin_port = htons(atoi(AM_SERVER_PORT));
-	socketAddress.sin_addr.s_addr = inet_addr(ip);
-
 	// attempt to connect to the server
-	if (connect(sockfd, (struct sockaddr*) &socketAddress, sizeof(socketAddress)) < 0) {
-		printf("Error: could not connect to the server: %s.\n", strerror(errno));
+	if ((sockfd = ConnectToServer(ip, atoi(AM_SERVER_PORT))) == -1) {
 		return 1;
 	}	
 
@@ -185,7 +172,8 @@ int main(int argc, char **argv) {
 	for (int i = 0; i < nAvatars; i++) {
 		char startAvatarCmd[AM_MAX_MESSAGE];
 		sprintf(startAvatarCmd, "./amazing %i %i %i %s %i %s &", i, nAvatars, difficulty, ip, mazePort, fileName);
-		printf("%s\n", startAvatarCmd);
+		fprintf(logFile, "Starting avatar %i\n", i);
+		fprintf(logFile, "%s\n", startAvatarCmd);
 		system(startAvatarCmd);
 	}
 
