@@ -17,7 +17,7 @@ Lambrusco
 │   ├── [logs from successful trials]
 │   └── Cleanup.sh
 ├── src
-│   ├── amazing.c
+│   ├── amazing_client.c
 │   ├── amazing.h
 │   ├── AMStartup.c
 │   ├── AMStartup.h
