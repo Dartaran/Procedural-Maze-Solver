@@ -81,15 +81,26 @@ printf "Exit code: $?\n" >> .$log
 #
 printf "\nTESTING VALIDITY OF ARGUMENTS:\n" >> .$log
 
-printf "\nTest: valid --help option\n" >> .$log
+printf "\nTest: valid --help option, AMStartup\n" >> .$log
 printf "Expected: contents of helpfile should be displayed\n" >> .$log
 $EXEC --help &>> .$log
 printf "Exit code: $?\n" >> .$log
 
-printf "\nTest: invalid --help option\n" >> .$log
+printf "\nTest: invalid --help option, AMStartup\n" >> .$log
 printf "Expected: error message and exit code 1\n" >> .$log
 $EXEC -help &>> .$log
 printf "Exit code: $?\n" >> .$log
+
+printf "\nTest: valid --help option, avatar client\n" >> .$log
+printf "Expected: contents of helpfile should be displayed\n" >> .$log
+amazing --help &>> .$log
+printf "Exit code: $?\n" >> .$log
+
+printf "\nTest: invalid --help option, avatar client\n" >> .$log
+printf "Expected: error message and exit code 1\n" >> .$log
+amazing -help &>> .$log
+printf "Exit code: $?\n" >> .$log
+
 
 printf "\nTest: incorrect number of avatars (1)\n" >> .$log
 printf "Expected: error message and exit code 1\n" >> .$log
@@ -111,15 +122,6 @@ printf "Expected: error message and exit code 1\n" >> .$log
 $EXEC 2 10 flume.cs.dartmouth.edu &>> .$log
 printf "Exit code: $?\n" >> .$log
 
-
 #
-printf "\nFUNCTIONAL TESTING:\n" >> .$log
-
-printf "\nTest: 2 avatars, difficulty 0\n" >> .$log
-printf "Expected: exit code 0\n" >> .$log
-$EXEC 2 0 flume.cs.dartmouth.edu &>> .$log
-printf "Exit code: $?\n" >> .$log
-
-
-printf "\nEnd of testing\n" >> .$log
+printf "\nEnd of Testing\n" >> .$log
 
