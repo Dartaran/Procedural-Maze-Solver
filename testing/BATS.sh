@@ -93,12 +93,12 @@ printf "Exit code: $?\n" >> .$log
 
 printf "\nTest: valid --help option, avatar client\n" >> .$log
 printf "Expected: contents of helpfile should be displayed\n" >> .$log
-amazing --help &>> .$log
+amazing_client --help &>> .$log
 printf "Exit code: $?\n" >> .$log
 
 printf "\nTest: invalid --help option, avatar client\n" >> .$log
 printf "Expected: error message and exit code 1\n" >> .$log
-amazing -help &>> .$log
+amazing_client -help &>> .$log
 printf "Exit code: $?\n" >> .$log
 
 
