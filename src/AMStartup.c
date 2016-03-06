@@ -59,12 +59,12 @@ int main(int argc, char **argv) {
 				return 0;
 			}
 			else {
-				printf("Usage: incorrect arguments. Use --help option for usage info.\n");
+				fprintf(stderr, "Usage: incorrect arguments. Use --help option for usage info.\n");
 				return 1;
 			}
 		}
 		else {
-			printf("Usage: ./AMStartup [nAvatars] [Difficulty] [Hostname]\n");
+			fprintf(stderr, "Usage: ./AMStartup [nAvatars] [Difficulty] [Hostname]\n");
 			return 1;
 		}
 	}

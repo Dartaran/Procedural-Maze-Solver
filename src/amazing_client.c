@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
 				return 0;
 			}
 			else {
-				printf("Usage: incorrect arguments. Use --help option for usage info.\n");
+				fprintf(stderr, "Usage: incorrect arguments. Use --help option for usage info.\n");
 				return 1;
 			}
 		}
