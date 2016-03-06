@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 	// Declare local variables
 	int i, dir, nextDirection, nextCompassIndex;
 	unsigned int avatarId, nAvatars, difficulty, mazePort;
-	uint32_t sockFd;
+	uint32_t sockFd = 0;
 	char* serverIp;
 	char* logFilePath;
 	FILE* logFile;
@@ -95,26 +95,8 @@ int main(int argc, char* argv[]) {
 	avatar->pos.x = -1;			// initialized to impossible value
 	avatar->pos.y = -1;
 
-	// create the socket
-	if ((sockFd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		printf("Error: failed to create the socket\n");
-		fclose(logFile);
-		free(avatar);
-		return 1;	
-	}
-
-	// create the socket address
-	struct sockaddr_in serverAddress;
-	memset(&serverAddress, 0, sizeof(serverAddress));
-	serverAddress.sin_family = AF_INET;
-	serverAddress.sin_port = htons(mazePort);
-	serverAddress.sin_addr.s_addr = inet_addr(serverIp);
-
 	// attempt to connect to the server
-	if (connect(sockFd, (struct sockaddr*) &serverAddress, sizeof(serverAddress)) < 0) {
-		printf("Error: could not connect to the server: %s.\n", strerror(errno));
-		fclose(logFile);
-		free(avatar);
+	if (!ConnectToServer(sockFd, serverIp, mazePort)) {
 		return 1;
 	}
 		
