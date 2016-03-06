@@ -8,16 +8,16 @@ CC = gcc
 CFLAGS = -Wall -pedantic -std=c11
 DEBUG = -g -ggdb
 
-all: amazing AMStartup
+all: amazing_client AMStartup
 
-amazing: ./src/amazing.c 
-	$(CC) $(CFLAGS) -o ./bin/$@ ./src/amazing.c ./src/utils.c
+amazing_client: ./src/amazing_client.c 
+	$(CC) $(CFLAGS) -o ./bin/$@ ./src/amazing_client.c ./src/utils.c
 
 AMStartup: ./src/AMStartup.c 
 	$(CC) $(CFLAGS) -o ./bin/$@ ./src/AMStartup.c ./src/utils.c
 
 debug:
-	$(CC) $(CFLAGS) $(DEBUG) -o ./bin/amazing ./src/amazing.c ./src/utils.c
+	$(CC) $(CFLAGS) $(DEBUG) -o ./bin/amazing_client ./src/amazing_client.c ./src/utils.c
 	$(CC) $(CFLAGS) $(DEBUG) -o ./bin/AMStartup ./src/AMStartup.c ./src/utils.c
 
 clean:
