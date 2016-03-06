@@ -122,9 +122,9 @@ int main(int argc, char* argv[]) {
 		logFile = fopen(logFilePath, "a");
 		// evaluate message type
 		if (IS_AM_ERROR(ntohl(recvMessage->type))){
-			fprintf(logFile, "Error: %"PRIu32" \n", ntohl(recvMessage->type));
-
 			if(0 == avatarId) {
+				fprintf(logFile, "Error %"PRIu32": ", ntohl(recvMessage->type));
+
 				if (ntohl(recvMessage->type) == AM_SERVER_OUT_OF_MEM) {
 					fprintf(logFile, "server out of memory.\n");
 				}
@@ -143,10 +143,10 @@ int main(int argc, char* argv[]) {
 			}
 
 			if (ntohl(recvMessage->type) == AM_NO_SUCH_AVATAR) {
-				fprintf(logFile, "no avatar with ID %i\n", avatarId);
+				fprintf(logFile, "Error: no avatar with ID %i\n", avatarId);
 			}
 			else if (ntohl(recvMessage->type) == AM_AVATAR_OUT_OF_TURN) {
-				fprintf(logFile, "avatar %i out of turn.\n", avatarId);
+				fprintf(logFile, "Error: avatar %i out of turn.\n", avatarId);
 			}
 
 			// free allocated memory, etc
@@ -159,7 +159,7 @@ int main(int argc, char* argv[]) {
 			// If it’s my turn to move:
 			if(ntohl(recvMessage->avatar_turn.TurnId) == avatarId) {
 				// log the turn data
-				fprintf(logFile, "received msg: AM_AVATAR_TURN (TurnId: %"PRIu32",", ntohl(recvMessage->avatar_turn.TurnId));
+				fprintf(logFile, "received msg: AM_AVATAR_TURN (TurnId: %"PRIu32, ntohl(recvMessage->avatar_turn.TurnId));
 				for (int id = 0; id < AM_MAX_AVATAR; id++) {
 					fprintf(logFile, ", a%i = (%i,%i)", id, (unsigned int) ntohl(recvMessage->avatar_turn.Pos[id].x), (unsigned int) ntohl(recvMessage->avatar_turn.Pos[id].y));
 				}
