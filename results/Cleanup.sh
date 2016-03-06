@@ -12,7 +12,7 @@ while [ $i -lt ${#filenames[*]} ]; do
 	curr=${filenames[$i]}
 
 	if [ "$curr" != "Cleanup.sh" ]; then
-		if grep -vq "Maze solved" $curr; then
+		if ! grep -q "Maze solved" $curr; then
 			rm -f $curr
 		fi
 	fi
