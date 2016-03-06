@@ -108,6 +108,8 @@ int main(int argc, char* argv[]) {
 	send(sockFd, avatarReady, sizeof(AM_Message), 0);
 	fprintf(logFile, "Avatar ID %i sent avatar ready.\n", avatarId);
 
+	fclose(logFile);
+
 	// free send memory
 	free(avatarReady);
 
