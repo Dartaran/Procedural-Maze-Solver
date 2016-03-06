@@ -1,0 +1,23 @@
+dartaran 42695 Sun Mar  6 15:14:24 2016
+Starting avatar 0
+./amazing 0 4 6 129.170.214.115 42695 ../results/Amazing_dartaran_4_6.log &
+Starting avatar 1
+./amazing 1 4 6 129.170.214.115 42695 ../results/Amazing_dartaran_4_6.log &
+Starting avatar 2
+./amazing 2 4 6 129.170.214.115 42695 ../results/Amazing_dartaran_4_6.log &
+Starting avatar 3
+./amazing 3 4 6 129.170.214.115 42695 ../results/Amazing_dartaran_4_6.log &
+Avatar ID 0 sent avatar ready.
+received msg: AM_AVATAR_TURN (TurnId: 0,, a0 = (18,9), a1 = (27,25), a2 = (28,11), a3 = (4,27), a4 = (-1,-1), a5 = (-1,-1), a6 = (-1,-1), a7 = (-1,-1), a8 = (-1,-1), a9 = (-1,-1))
+sent msg: AM_AVATAR_MOVE (AvatarId = 0, Direction 8)
+Error: 4294967295 
+Avatar ID 1 sent avatar ready.
+received msg: AM_AVATAR_TURN (TurnId: 1,, a0 = (18,9), a1 = (27,25), a2 = (28,11), a3 = (4,27), a4 = (-1,-1), a5 = (-1,-1), a6 = (-1,-1), a7 = (-1,-1), a8 = (-1,-1), a9 = (-1,-1))
+sent msg: AM_AVATAR_MOVE (AvatarId = 1, Direction 2)
+Error: 4294967295 
+Avatar ID 3 sent avatar ready.
+received msg: AM_AVATAR_TURN (TurnId: 3,, a0 = (18,9), a1 = (27,26), a2 = (28,11), a3 = (4,27), a4 = (-1,-1), a5 = (-1,-1), a6 = (-1,-1), a7 = (-1,-1), a8 = (-1,-1), a9 = (-1,-1))
+sent msg: AM_AVATAR_MOVE (AvatarId = 3, Direction 2)
+Avatar ID 2 sent avatar ready.
+received msg: AM_AVATAR_TURN (TurnId: 2,, a0 = (18,9), a1 = (27,26), a2 = (28,11), a3 = (4,27), a4 = (-1,-1), a5 = (-1,-1), a6 = (-1,-1), a7 = (-1,-1), a8 = (-1,-1), a9 = (-1,-1))
+sent msg: AM_AVATAR_MOVE (AvatarId = 2, Direction 2)

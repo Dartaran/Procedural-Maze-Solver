@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
 	avatarMove = calloc(1, AM_MAX_MESSAGE + 1);
 
 	// While we haven’t completed the maze, listen for a message from the server:
-	while( (recvMessageLen = recv(sockFd, recvMessage, AM_MAX_MESSAGE, 0) > 0) 	) {
+	while( (recvMessageLen = recv(sockFd, recvMessage, sizeof(AM_Message), 0) > 0) 	) {
 		// evaluate message type
 		if (IS_AM_ERROR(ntohl(recvMessage->type))){
 			fprintf(logFile, "Error: %"PRIu32" \n", ntohl(recvMessage->type));

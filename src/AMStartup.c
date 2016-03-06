@@ -147,8 +147,6 @@ int main(int argc, char **argv) {
 	unsigned int mazeWidth = ntohl(initResponse->init_ok.MazeWidth);
 	unsigned int mazeHeight = ntohl(initResponse->init_ok.MazeHeight);
 
-	printf("%i %i %i", mazePort, mazeWidth, mazeHeight);
-
 	free(initResponse);
 
 	// create log file

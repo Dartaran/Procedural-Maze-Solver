@@ -1,0 +1,17 @@
+dartaran 33152 Sun Mar  6 15:13:51 2016
+Starting avatar 0
+./amazing 0 3 3 129.170.214.115 33152 ../results/Amazing_dartaran_3_3.log &
+Starting avatar 1
+./amazing 1 3 3 129.170.214.115 33152 ../results/Amazing_dartaran_3_3.log &
+Starting avatar 2
+./amazing 2 3 3 129.170.214.115 33152 ../results/Amazing_dartaran_3_3.log &
+Avatar ID 0 sent avatar ready.
+received msg: AM_AVATAR_TURN (TurnId: 0,, a0 = (8,9), a1 = (12,8), a2 = (18,18), a3 = (-1,-1), a4 = (-1,-1), a5 = (-1,-1), a6 = (-1,-1), a7 = (-1,-1), a8 = (-1,-1), a9 = (-1,-1))
+sent msg: AM_AVATAR_MOVE (AvatarId = 0, Direction 8)
+Error: 4294967295 
+Avatar ID 2 sent avatar ready.
+received msg: AM_AVATAR_TURN (TurnId: 2,, a0 = (8,9), a1 = (12,9), a2 = (18,18), a3 = (-1,-1), a4 = (-1,-1), a5 = (-1,-1), a6 = (-1,-1), a7 = (-1,-1), a8 = (-1,-1), a9 = (-1,-1))
+sent msg: AM_AVATAR_MOVE (AvatarId = 2, Direction 2)
+Avatar ID 1 sent avatar ready.
+received msg: AM_AVATAR_TURN (TurnId: 1,, a0 = (8,9), a1 = (12,8), a2 = (18,18), a3 = (-1,-1), a4 = (-1,-1), a5 = (-1,-1), a6 = (-1,-1), a7 = (-1,-1), a8 = (-1,-1), a9 = (-1,-1))
+sent msg: AM_AVATAR_MOVE (AvatarId = 1, Direction 2)
