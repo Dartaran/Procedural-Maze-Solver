@@ -21,7 +21,5 @@ debug:
 	$(CC) $(CFLAGS) $(DEBUG) -o ./bin/AMStartup ./src/AMStartup.c ./src/utils.c
 
 clean:
-	rm -f ./bin/*~
-	rm -f ./bin/*#
-	rm -f ./bin/*.o
+	rm -f ./bin/*
 	cd results; ./Cleanup.sh
