@@ -1,15 +1,14 @@
 /* ========================================================================== */
-/* File: utils.h
+/* File: AMStartup.h
  *
- * Project name: CS50 Tiny Search Engine
- * Component name: Crawler
+ * Project name: CS50 Amazing Project
  *
- * This file contains helpful utility macros.
+ * Header file for the startup script.
  *
  */
 /* ========================================================================== */
 #ifndef AMSTARTUP_H
-#define AMSTARTUP__H
+#define AMSTARTUP_H
 
 // ---------------- Prerequisites e.g., Requires "math.h"
 #include <stdio.h>                           // fprintf
@@ -25,4 +24,4 @@
 
 int getIPFromHostName(char *hostname, char *ip);
 
-#endif // UTILS_H
+#endif // AMSTART_H
