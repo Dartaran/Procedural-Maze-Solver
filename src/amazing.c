@@ -22,6 +22,7 @@
 #include <string.h>			// string functions
 #include <errno.h>			// errno support
 #include <inttypes.h>		// PRIu32
+#include <time.h>			// for date & time in log
 
 // ---------------- Local includes  e.g., "file.h"
 #include "amazing.h"
@@ -44,7 +45,7 @@ int main(int argc, char* argv[]) {
 	// Declare local variables
 	int i, dir, nextDirection, nextCompassIndex;
 	unsigned int avatarId, nAvatars, difficulty, mazePort;
-	uint32_t sockFd = 0;
+	uint32_t sockFd;
 	char* serverIp;
 	char* logFilePath;
 	FILE* logFile;
@@ -68,7 +69,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		else {
-			// print error to fprintf
+			// print error to stderr
 			fprintf(stderr, "Incorrect argument count for avatar %i.  Usage ./amazing [id] [nAvatars] [difficulty] [ip] [mazePort] [fileName]\n", atoi(argv[2]));	
 			exit (1);
 		}
@@ -96,7 +97,7 @@ int main(int argc, char* argv[]) {
 	avatar->pos.y = -1;
 
 	// attempt to connect to the server
-	if (!ConnectToServer(sockFd, serverIp, mazePort)) {
+	if ((sockFd = ConnectToServer(serverIp, mazePort)) < 0) {
 		return 1;
 	}
 		
@@ -105,7 +106,7 @@ int main(int argc, char* argv[]) {
 	avatarReady->type = htonl(AM_AVATAR_READY);
 	avatarReady->avatar_ready.AvatarId = htonl(avatarId);
 	send(sockFd, avatarReady, sizeof(AM_Message), 0);
-	printf("Avatar ID %i sent avatar ready.\n", avatarId);
+	fprintf(logFile, "Avatar ID %i sent avatar ready.\n", avatarId);
 
 	// free send memory
 	free(avatarReady);
@@ -117,31 +118,31 @@ int main(int argc, char* argv[]) {
 	while( (recvMessageLen = recv(sockFd, recvMessage, AM_MAX_MESSAGE, 0) > 0) 	) {
 		// evaluate message type
 		if (IS_AM_ERROR(ntohl(recvMessage->type))){
-			printf("Error: %"PRIu32" \n", ntohl(recvMessage->type));
+			fprintf(logFile, "Error: %"PRIu32" \n", ntohl(recvMessage->type));
 
 			if(0 == avatarId) {
 				if (ntohl(recvMessage->type) == AM_SERVER_OUT_OF_MEM) {
-					printf("server out of memory.\n");
+					fprintf(logFile, "server out of memory.\n");
 				}
 				else if (ntohl(recvMessage->type) == AM_SERVER_DISK_QUOTA) {
-					printf("server disk quota exceeded.\n");
+					fprintf(logFile, "server disk quota exceeded.\n");
 				}
 				else if (ntohl(recvMessage->type) == AM_UNEXPECTED_MSG_TYPE) {
-					printf("unexpected message type.\n");
+					fprintf(logFile, "unexpected message type.\n");
 				}
 				else if (ntohl(recvMessage->type) == AM_TOO_MANY_MOVES) {
-					printf("too many moves.\n");
+					fprintf(logFile, "too many moves.\n");
 				}
 				else if (ntohl(recvMessage->type) == AM_UNKNOWN_MSG_TYPE) {
-					printf("unknown message type %i.\n", ntohl(recvMessage->unknown_msg_type.BadType));
+					fprintf(logFile, "unknown message type %i.\n", ntohl(recvMessage->unknown_msg_type.BadType));
 				}
 			}
 
 			if (ntohl(recvMessage->type) == AM_NO_SUCH_AVATAR) {
-				printf("no avatar with ID %i\n", avatarId);
+				fprintf(logFile, "no avatar with ID %i\n", avatarId);
 			}
 			else if (ntohl(recvMessage->type) == AM_AVATAR_OUT_OF_TURN) {
-				printf("avatar %i out of turn.\n", avatarId);
+				fprintf(logFile, "avatar %i out of turn.\n", avatarId);
 			}
 
 			// free allocated memory, etc
@@ -150,10 +151,16 @@ int main(int argc, char* argv[]) {
 			fclose(logFile);
 			return 1;
 		}
-
 		else if(ntohl(recvMessage->type) == AM_AVATAR_TURN) {
 			// If it’s my turn to move:
 			if(ntohl(recvMessage->avatar_turn.TurnId) == avatarId) {
+				// log the turn data
+				fprintf(logFile, "received msg: AM_AVATAR_TURN (TurnId: %"PRIu32",", ntohl(recvMessage->avatar_turn.TurnId));
+				for (int id = 0; id < AM_MAX_AVATAR; id++) {
+					fprintf(logFile, ", a%i = (%i,%i)", id, (unsigned int) ntohl(recvMessage->avatar_turn.Pos[id].x), (unsigned int) ntohl(recvMessage->avatar_turn.Pos[id].y));
+				}
+				fprintf(logFile, ")\n");
+
 				// If my position changed:
 				XYPos pos = recvMessage->avatar_turn.Pos[avatarId];
 				if(ntohl(pos.x) != avatar->pos.x || ntohl(pos.y) != avatar->pos.y) {
@@ -183,13 +190,15 @@ int main(int argc, char* argv[]) {
 				avatarMove->avatar_move.Direction = htonl(nextDirection);
 				send(sockFd, avatarMove, sizeof(AM_Message), 0);
 
+				fprintf(logFile, "sent msg: AM_AVATAR_MOVE (AvatarId = %i, Direction %i)\n", avatarId, nextDirection);
 				i++;
 			}
 		} 
-
 		else if (ntohl(recvMessage->type) == AM_MAZE_SOLVED) {
 			if(0 == avatarId) {
-				printf("Success! Maze solved. nAvatars: %i Difficulty: %i Moves: %"PRIu32" Hash: %"PRIu32"\n", nAvatars, difficulty, ntohl(recvMessage->maze_solved.nMoves), ntohl(recvMessage->maze_solved.Hash));
+				time_t now;
+				time(&now);
+				fprintf(logFile, "Success! Maze solved. nAvatars: %i Difficulty: %i Moves: %"PRIu32" Hash: %"PRIu32" %s", nAvatars, difficulty, ntohl(recvMessage->maze_solved.nMoves), ntohl(recvMessage->maze_solved.Hash), ctime(&now));			
 			}
 			// free allocated memory, etc
 			fclose(logFile);

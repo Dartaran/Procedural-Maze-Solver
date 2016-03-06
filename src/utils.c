@@ -58,10 +58,12 @@ int DisplayFile(char *filepath)
 /*
 * Connects to a server with specified socket, ip, and port.
 */
-int ConnectToServer(uint32_t sockFd, char *serverIp, int port) {
+int ConnectToServer(char *serverIp, int port) {
+	uint32_t sockFd;
+	
 	if ((sockFd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		printf("Error: failed to create the socket\n");
-		return 0;	
+		return -1;	
 	}
 
 	// create the socket address
@@ -73,8 +75,8 @@ int ConnectToServer(uint32_t sockFd, char *serverIp, int port) {
 
 	if (connect(sockFd, (struct sockaddr*) &serverAddress, sizeof(serverAddress)) < 0) {
 		printf("Error: could not connect to the server: %s.\n", strerror(errno));
-		return 0;
+		return -1;
 	}
 
-	return 1;
+	return sockFd;
 }

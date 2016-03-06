@@ -49,6 +49,6 @@ int DisplayFile(char *filepath);
 /*
 * Connects to a server with specified socket, ip, and port.
 */
-int ConnectToServer(uint32_t sockFd, char *serverIp, int port);
+int ConnectToServer(char *serverIp, int port);
 
 #endif // UTILS_H
