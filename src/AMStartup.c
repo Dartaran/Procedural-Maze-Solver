@@ -147,8 +147,6 @@ int main(int argc, char **argv) {
 	unsigned int mazeWidth = ntohl(initResponse->init_ok.MazeWidth);
 	unsigned int mazeHeight = ntohl(initResponse->init_ok.MazeHeight);
 
-	printf("%i %i %i", mazePort, mazeWidth, mazeHeight);
-
 	free(initResponse);
 
 	// create log file
@@ -171,7 +169,7 @@ int main(int argc, char **argv) {
 	// startup avatar processes
 	for (int i = 0; i < nAvatars; i++) {
 		char startAvatarCmd[AM_MAX_MESSAGE];
-		sprintf(startAvatarCmd, "./amazing %i %i %i %s %i %s &", i, nAvatars, difficulty, ip, mazePort, fileName);
+		sprintf(startAvatarCmd, "./amazing_client %i %i %i %s %i %s &", i, nAvatars, difficulty, ip, mazePort, fileName);
 		fprintf(logFile, "Starting avatar %i\n", i);
 		fprintf(logFile, "%s\n", startAvatarCmd);
 		system(startAvatarCmd);
