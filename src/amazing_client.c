@@ -116,6 +116,8 @@ int main(int argc, char* argv[]) {
 
 	// While we haven’t completed the maze, listen for a message from the server:
 	while( (recvMessageLen = recv(sockFd, recvMessage, sizeof(AM_Message), 0) > 0) 	) {
+		// open/close log file each iteration of the loop so that avatars don't print out of order
+		logFile = fopen(logFilePath, "a");
 		// evaluate message type
 		if (IS_AM_ERROR(ntohl(recvMessage->type))){
 			fprintf(logFile, "Error: %"PRIu32" \n", ntohl(recvMessage->type));
@@ -207,9 +209,9 @@ int main(int argc, char* argv[]) {
 			free(avatar);
 			return 0;
 		}
+		fclose(logFile);
 	}
 
-	fclose(logFile);
 	free(avatar);
 	return 1;
 }
