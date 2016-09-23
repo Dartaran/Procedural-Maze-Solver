@@ -1,31 +1,32 @@
-Amazing Project - CS50, Winter 2016
+# Amazing Project - CS50, Winter 2016
 Authors: Kyu Kim, Alan Lu, Donald Wilson
 
 The project files are arranged in the following directory structure:
 
 Lambrusco
-├── bin
-│   ├── amazing_client
-│   └── AMStartup
-├── help
-│   ├── amazing_help.txt
-│   └── AMStartup_help.txt
-├── kkim96-project-design.pdf
-├── Makefile
-├── README.md
-├── results
-│   ├── [logs from successful trials]
-│   └── Cleanup.sh
-├── src
-│   ├── amazing_client.c
-│   ├── amazing.h
-│   ├── AMStartup.c
-│   ├── AMStartup.h
-│   ├── utils.c
-│   └── utils.h
-└── testing
-    ├── BATS.log
-    └── BATS.sh
+
+├── bin<br>
+│   ├── amazing_client<br>
+│   └── AMStartup<br>
+├── help<br>
+│   ├── amazing_help.txt<br>
+│   └── AMStartup_help.txt<br>
+├── kkim96-project-design.pdf<br>
+├── Makefile<br>
+├── README.md<br>
+├── results<br>
+│   ├── [logs from successful trials]<br>
+│   └── Cleanup.sh<br>
+├── src<br>
+│   ├── amazing_client.c<br>
+│   ├── amazing.h<br>
+│   ├── AMStartup.c<br>
+│   ├── AMStartup.h<br>
+│   ├── utils.c<br>
+│   └── utils.h<br>
+└── testing<br>
+    ├── BATS.log<br>
+    └── BATS.sh<br>
 
 Notes:
 
